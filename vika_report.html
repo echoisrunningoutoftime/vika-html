@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>任务一：数字化项目管理系统 · Vika 方案可视化</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500&family=Noto+Sans+SC:wght@300;400;500&display=swap');
+
+  :root {
+    --teal-50: #E1F5EE; --teal-100: #9FE1CB; --teal-400: #1D9E75; --teal-600: #0F6E56; --teal-800: #085041;
+    --blue-50: #E6F1FB; --blue-400: #378ADD; --blue-600: #185FA5; --blue-800: #0C447C;
+    --purple-50: #EEEDFE; --purple-400: #7F77DD; --purple-600: #534AB7; --purple-800: #3C3489;
+    --amber-50: #FAEEDA; --amber-400: #EF9F27; --amber-600: #854F0B; --amber-800: #633806;
+    --coral-50: #FAECE7; --coral-400: #D85A30; --coral-600: #993C1D; --coral-800: #712B13;
+    --gray-50: #F1EFE8; --gray-100: #D3D1C7; --gray-400: #888780; --gray-600: #5F5E5A; --gray-800: #444441;
+    --text: #1a1a18; --text-sec: #5F5E5A; --text-ter: #888780;
+    --bg: #fafaf8; --bg2: #f4f3ef; --border: rgba(0,0,0,0.1);
+    --radius: 8px; --radius-lg: 14px;
+    --sans: 'Noto Sans SC', sans-serif;
+    --serif: 'Noto Serif SC', serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    font-size: 14px;
+    padding: 0 0 80px;
+  }
+
+  /* ── Header ── */
+  .page-header {
+    border-bottom: 0.5px solid var(--border);
+    padding: 28px 48px 24px;
+    background: #fff;
+  }
+  .page-header .eyebrow {
+    font-size: 11px;
+    letter-spacing: .08em;
+    color: var(--text-ter);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .page-header h1 {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .page-header .subtitle {
+    font-size: 13px;
+    color: var(--text-sec);
+  }
+
+  /* ── Nav tabs ── */
+  .nav-strip {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #fff;
+    border-bottom: 0.5px solid var(--border);
+    padding: 0 48px;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+  }
+  .nav-tab {
+    padding: 14px 20px 12px;
+    font-size: 13px;
+    color: var(--text-sec);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: color .15s, border-color .15s;
+    user-select: none;
+  }
+  .nav-tab:hover { color: var(--text); }
+  .nav-tab.active { color: var(--teal-600); border-bottom-color: var(--teal-400); font-weight: 500; }
+
+  /* ── Section wrapper ── */
+  .section { display: none; padding: 36px 48px 0; }
+  .section.active { display: block; }
+  .section-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .07em;
+    color: var(--text-ter);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .section-title {
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .section-desc {
+    font-size: 13px;
+    color: var(--text-sec);
+    margin-bottom: 28px;
+    max-width: 640px;
+    line-height: 1.7;
+  }
+
+  /* ── Vika reference strip ── */
+  .vika-strip {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .vika-chip {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 0.5px solid;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .vika-chip::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: .6;
+  }
+  .chip-teal  { background: var(--teal-50);   color: var(--teal-800);   border-color: var(--teal-100); }
+  .chip-blue  { background: var(--blue-50);   color: var(--blue-800);   border-color: #B5D4F4; }
+  .chip-purple{ background: var(--purple-50); color: var(--purple-800); border-color: #CECBF6; }
+  .chip-amber { background: var(--amber-50);  color: var(--amber-800);  border-color: #FAC775; }
+  .chip-gray  { background: var(--gray-50);   color: var(--gray-800);   border-color: var(--gray-100); }
+
+  /* ── Diagram card ── */
+  .diagram-card {
+    background: #fff;
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    margin-bottom: 20px;
+    overflow-x: auto;
+  }
+  .diagram-card svg { display: block; }
+
+  /* ── SVG base styles (scoped to .diagram-card) ── */
+  .diagram-card svg text { font-family: var(--sans); }
+
+  /* ── Dashboard mockup ── */
+  .db-section { margin-bottom: 20px; }
+  .db-metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; }
+  .db-metric {
+    background: var(--bg2);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+  }
+  .db-metric-val { font-size: 24px; font-weight: 500; color: var(--text); line-height: 1.1; }
+  .db-metric-lbl { font-size: 11px; color: var(--text-sec); margin-top: 4px; }
+  .db-metric-delta { font-size: 11px; margin-top: 3px; }
+  .delta-up   { color: var(--teal-600); }
+  .delta-warn { color: var(--amber-600); }
+  .delta-err  { color: #A32D2D; }
+  .db-mid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 12px; margin-bottom: 14px; }
+  .db-panel {
+    background: #fff;
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+  }
+  .db-panel-title { font-size: 11px; font-weight: 500; color: var(--text-sec); margin-bottom: 10px; text-transform: uppercase; letter-spacing: .04em; }
+  .bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 12px; }
+  .bar-lbl { width: 52px; font-size: 11px; color: var(--text-sec); text-align: right; flex-shrink: 0; }
+  .bar-track { flex: 1; height: 10px; background: var(--bg2); border-radius: 5px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 5px; transition: width .4s ease; }
+  .bar-val { width: 28px; font-size: 11px; color: var(--text-sec); flex-shrink: 0; }
+  .kanban-cols { display: flex; gap: 6px; }
+  .kb-col { flex: 1; }
+  .kb-header { font-size: 10px; font-weight: 500; padding: 4px 6px; border-radius: 4px; text-align: center; margin-bottom: 5px; }
+  .kb-card { font-size: 11px; padding: 5px 7px; border-radius: 4px; margin-bottom: 4px; background: var(--bg2); border: 0.5px solid var(--border); line-height: 1.4; color: var(--text); }
+  .kb-card span { color: var(--text-sec); }
+  .db-bottom { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .warn-row { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; padding: 5px 0; border-bottom: 0.5px solid var(--border); }
+  .warn-row:last-child { border: none; }
+  .warn-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
+
+  /* ── Permission matrix ── */
+  .role-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
+  .role-card { border-radius: var(--radius-lg); border: 0.5px solid var(--border); overflow: hidden; }
+  .role-hd { padding: 10px 12px 8px; }
+  .role-hd-title { font-size: 13px; font-weight: 500; margin-bottom: 2px; }
+  .role-hd-sub { font-size: 11px; opacity: .75; }
+  .role-body { padding: 10px 12px; background: #fff; }
+  .perm-row { display: flex; align-items: flex-start; gap: 7px; margin-bottom: 7px; font-size: 11px; line-height: 1.4; }
+  .perm-icon { width: 15px; height: 15px; border-radius: 3px; flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 500; }
+  .icon-full  { background: var(--teal-50);   color: var(--teal-800); }
+  .icon-read  { background: var(--blue-50);   color: var(--blue-800); }
+  .icon-write { background: var(--amber-50);  color: var(--amber-800); }
+  .icon-none  { background: var(--gray-50);   color: var(--gray-400); }
+  .perm-muted { color: var(--text-sec); }
+  .vtag { display: inline-block; font-size: 10px; padding: 1px 5px; border-radius: 3px; margin-left: 3px; vertical-align: middle; }
+  .vtag-t { background: var(--teal-50);   color: var(--teal-800); }
+  .vtag-b { background: var(--blue-50);   color: var(--blue-800); }
+  .vtag-a { background: var(--amber-50);  color: var(--amber-800); }
+  .vtag-g { background: var(--gray-50);   color: var(--gray-800); }
+
+  .matrix-wrap { background: var(--bg2); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 12px; overflow-x: auto; }
+  .matrix-title { font-size: 11px; font-weight: 500; color: var(--text-sec); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 10px; }
+  table.perm-matrix { width: 100%; border-collapse: collapse; font-size: 11px; min-width: 480px; }
+  table.perm-matrix th { font-size: 11px; font-weight: 500; padding: 6px 8px; text-align: center; border-bottom: 0.5px solid var(--border); }
+  table.perm-matrix th:first-child { text-align: left; }
+  table.perm-matrix td { padding: 6px 8px; border-bottom: 0.5px solid rgba(0,0,0,.05); text-align: center; }
+  table.perm-matrix td:first-child { text-align: left; color: var(--text-sec); }
+  .cell-full  { background: var(--teal-50);   color: var(--teal-800);   border-radius: 4px; padding: 3px 6px; display: inline-block; }
+  .cell-read  { background: var(--blue-50);   color: var(--blue-800);   border-radius: 4px; padding: 3px 6px; display: inline-block; }
+  .cell-write { background: var(--amber-50);  color: var(--amber-800);  border-radius: 4px; padding: 3px 6px; display: inline-block; }
+  .cell-none  { background: var(--gray-50);   color: var(--gray-400);   border-radius: 4px; padding: 3px 6px; display: inline-block; }
+
+  .privacy-box { border: 0.5px solid var(--teal-100); border-radius: var(--radius); padding: 12px 16px; background: var(--teal-50); }
+  .privacy-title { font-size: 11px; font-weight: 500; color: var(--teal-800); margin-bottom: 8px; text-transform: uppercase; letter-spacing: .04em; }
+  .privacy-row { font-size: 12px; color: var(--teal-600); margin-bottom: 4px; display: flex; gap: 6px; }
+
+  /* ── Legend ── */
+  .legend-row { display: flex; gap: 16px; font-size: 11px; flex-wrap: wrap; color: var(--text-sec); margin-top: 10px; }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+
+  /* ── How-to deploy footer note ── */
+  .deploy-note {
+    margin: 40px 48px 0;
+    padding: 16px 20px;
+    background: var(--blue-50);
+    border: 0.5px solid #B5D4F4;
+    border-radius: var(--radius);
+    font-size: 12px;
+    color: var(--blue-800);
+    line-height: 1.8;
+  }
+  .deploy-note strong { font-weight: 500; }
+
+  @media (max-width: 640px) {
+    .page-header, .nav-strip, .section { padding-left: 20px; padding-right: 20px; }
+    .db-metric-grid { grid-template-columns: repeat(2,1fr); }
+    .db-mid, .db-bottom { grid-template-columns: 1fr; }
+    .role-grid { grid-template-columns: repeat(2,1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="eyebrow">核心任务一 · 数字化转型规划 2026–2028</div>
+  <h1>轻量化数字化项目管理系统</h1>
+  <div class="subtitle">工具选型：维格表（Vika）· 适配乡村留守儿童心理健康服务场景</div>
+</div>
+
+<div class="nav-strip">
+  <div class="nav-tab active" onclick="show('arch')">图1 · 总体架构</div>
+  <div class="nav-tab" onclick="show('flow')">图2 · 项目流程</div>
+  <div class="nav-tab" onclick="show('dash')">图3 · 指标看板</div>
+  <div class="nav-tab" onclick="show('perm')">图4 · 角色权限</div>
+</div>
+
+<!-- ════════════════════════════════════════ 图1 架构图 ════════════════════════════════════════ -->
+<div id="sec-arch" class="section active">
+  <div class="section-label">图 1</div>
+  <div class="section-title">任务一数字化工具总体架构图</div>
+  <div class="section-desc">展示"线下输入端 → Vika 三层中台 → 管理输出"的完整数据流向。Vika 不是单独的表格工具，而是将原本分散的项目数据统一进同一系统的轻量级中台。</div>
+  <div class="vika-strip">
+    <span class="vika-chip chip-teal">Vika 实际入口：多维表格首页</span>
+    <span class="vika-chip chip-blue">底层 → 新建数据表</span>
+    <span class="vika-chip chip-purple">中层 → 看板/甘特视图</span>
+    <span class="vika-chip chip-amber">上层 → 仪表盘小程序</span>
+  </div>
+  <div class="diagram-card">
+    <svg width="100%" viewBox="0 0 760 480" style="min-width:600px;">
+      <defs>
+        <marker id="arr1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+
+      <!-- Left column heading -->
+      <text x="80" y="30" text-anchor="middle" font-size="11" fill="#888780" font-family="'Noto Sans SC',sans-serif" font-weight="500">线下输入端</text>
+
+      <!-- Input boxes -->
+      <g>
+        <rect x="20" y="48" width="120" height="46" rx="8" fill="#F1EFE8" stroke="#D3D1C7" stroke-width="0.5"/>
+        <text x="80" y="68" text-anchor="middle" font-size="13" font-weight="500" fill="#444441" font-family="'Noto Sans SC',sans-serif">纸质问卷</text>
+        <text x="80" y="84" text-anchor="middle" font-size="11" fill="#888780" font-family="'Noto Sans SC',sans-serif">抗逆力评估表</text>
+      </g>
+      <g>
+        <rect x="20" y="110" width="120" height="46" rx="8" fill="#F1EFE8" stroke="#D3D1C7" stroke-width="0.5"/>
+        <text x="80" y="130" text-anchor="middle" font-size="13" font-weight="500" fill="#444441" font-family="'Noto Sans SC',sans-serif">红花贴统计</text>
+        <text x="80" y="146" text-anchor="middle" font-size="11" fill="#888780" font-family="'Noto Sans SC',sans-serif">学生出勤记录</text>
+      </g>
+      <g>
+        <rect x="20" y="172" width="120" height="46" rx="8" fill="#F1EFE8" stroke="#D3D1C7" stroke-width="0.5"/>
+        <text x="80" y="192" text-anchor="middle" font-size="13" font-weight="500" fill="#444441" font-family="'Noto Sans SC',sans-serif">教师课堂记录</text>
+        <text x="80" y="208" text-anchor="middle" font-size="11" fill="#888780" font-family="'Noto Sans SC',sans-serif">课程执行反馈</text>
+      </g>
+      <g>
+        <rect x="20" y="234" width="120" height="46" rx="8" fill="#F1EFE8" stroke="#D3D1C7" stroke-width="0.5"/>
+        <text x="80" y="254" text-anchor="middle" font-size="13" font-weight="500" fill="#444441" font-family="'Noto Sans SC',sans-serif">手写书信</text>
+        <text x="80" y="270" text-anchor="middle" font-size="11" fill="#888780" font-family="'Noto Sans SC',sans-serif">OCR 初步识别</text>
+      </g>
+
+      <!-- funnel connector lines to amber box -->
+      <path d="M140 71 L155 71 L155 163 L170 163" fill="none" stroke="#D3D1C7" stroke-width="0.5"/>
+      <path d="M140 133 L155 133 L155 163 L170 163" fill="none" stroke="#D3D1C7" stroke-width="0.5"/>
+      <path d="M140 195 L155 195 L155 183 L170 183" fill="none" stroke="#D3D1C7" stroke-width="0.5"/>
+      <path d="M140 257 L155 257 L155 193 L170 193" fill="none" stroke="#D3D1C7" stroke-width="0.5"/>
+
+      <!-- Amber funnel box -->
+      <g>
+        <rect x="170" y="140" width="118" height="62" rx="8" fill="#FAEEDA" stroke="#FAC775" stroke-width="0.5"/>
+        <text x="229" y="162" text-anchor="middle" font-size="13" font-weight="500" fill="#633806" font-family="'Noto Sans SC',sans-serif">标准化录入模板</text>
+        <text x="229" y="179" text-anchor="middle" font-size="11" fill="#854F0B" font-family="'Noto Sans SC',sans-serif">+ OCR 识别 + 人工复核</text>
+      </g>
+
+      <!-- funnel → Vika -->
+      <line x1="288" y1="171" x2="316" y2="171" stroke="#1D9E75" stroke-width="1.5" marker-end="url(#arr1)"/>
+
+      <!-- Vika outer container -->
+      <rect x="318" y="40" width="220" height="320" rx="16" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="0.5"/>
+      <text x="428" y="68" text-anchor="middle" font-size="14" font-weight="500" fill="#085041" font-family="'Noto Sans SC',sans-serif">Vika 项目管理中台</text>
+
+      <!-- Layer 1 -->
+      <rect x="334" y="82" width="188" height="78" rx="8" fill="#E6F1FB" stroke="#B5D4F4" stroke-width="0.5"/>
+      <text x="428" y="103" text-anchor="middle" font-size="13" font-weight="500" fill="#0C447C" font-family="'Noto Sans SC',sans-serif">底层数据录入库</text>
+      <text x="428" y="120" text-anchor="middle" font-size="11" fill="#185FA5" font-family="'Noto Sans SC',sans-serif">项目总表 · 学校表</text>
+      <text x="428" y="136" text-anchor="middle" font-size="11" fill="#185FA5" font-family="'Noto Sans SC',sans-serif">课程执行表 · 志愿者表</text>
+
+      <!-- Arrow between layers -->
+      <line x1="428" y1="160" x2="428" y2="178" stroke="#1D9E75" stroke-width="1" marker-end="url(#arr1)"/>
+
+      <!-- Layer 2 -->
+      <rect x="334" y="180" width="188" height="78" rx="8" fill="#EEEDFE" stroke="#CECBF6" stroke-width="0.5"/>
+      <text x="428" y="201" text-anchor="middle" font-size="13" font-weight="500" fill="#3C3489" font-family="'Noto Sans SC',sans-serif">中层项目流程库</text>
+      <text x="428" y="218" text-anchor="middle" font-size="11" fill="#534AB7" font-family="'Noto Sans SC',sans-serif">看板视图 · 甘特图</text>
+      <text x="428" y="234" text-anchor="middle" font-size="11" fill="#534AB7" font-family="'Noto Sans SC',sans-serif">财务节点 · 自动化规则</text>
+
+      <line x1="428" y1="258" x2="428" y2="276" stroke="#1D9E75" stroke-width="1" marker-end="url(#arr1)"/>
+
+      <!-- Layer 3 -->
+      <rect x="334" y="278" width="188" height="68" rx="8" fill="#FAECE7" stroke="#F5C4B3" stroke-width="0.5"/>
+      <text x="428" y="298" text-anchor="middle" font-size="13" font-weight="500" fill="#712B13" font-family="'Noto Sans SC',sans-serif">上层指标分析库</text>
+      <text x="428" y="315" text-anchor="middle" font-size="11" fill="#993C1D" font-family="'Noto Sans SC',sans-serif">跨表关联 · 自动统计</text>
+      <text x="428" y="330" text-anchor="middle" font-size="11" fill="#993C1D" font-family="'Noto Sans SC',sans-serif">图表 · 仪表盘</text>
+
+      <!-- Vika → Outputs -->
+      <line x1="538" y1="121" x2="564" y2="121" stroke="#185FA5" stroke-width="1.5" marker-end="url(#arr1)"/>
+      <line x1="538" y1="219" x2="564" y2="219" stroke="#534AB7" stroke-width="1.5" marker-end="url(#arr1)"/>
+      <line x1="538" y1="312" x2="564" y2="312" stroke="#993C1D" stroke-width="1.5" marker-end="url(#arr1)"/>
+
+      <!-- Right column heading -->
+      <text x="660" y="30" text-anchor="middle" font-size="11" fill="#888780" font-family="'Noto Sans SC',sans-serif" font-weight="500">管理输出</text>
+
+      <!-- Output 1 -->
+      <rect x="564" y="90" width="172" height="56" rx="8" fill="#E6F1FB" stroke="#B5D4F4" stroke-width="0.5"/>
+      <text x="650" y="111" text-anchor="middle" font-size="13" font-weight="500" fill="#0C447C" font-family="'Noto Sans SC',sans-serif">项目甘特图</text>
+      <text x="650" y="128" text-anchor="middle" font-size="11" fill="#185FA5" font-family="'Noto Sans SC',sans-serif">跨区域进度追踪</text>
+
+      <!-- Output 2 -->
+      <rect x="564" y="188" width="172" height="56" rx="8" fill="#EEEDFE" stroke="#CECBF6" stroke-width="0.5"/>
+      <text x="650" y="209" text-anchor="middle" font-size="13" font-weight="500" fill="#3C3489" font-family="'Noto Sans SC',sans-serif">项目状态看板</text>
+      <text x="650" y="226" text-anchor="middle" font-size="11" fill="#534AB7" font-family="'Noto Sans SC',sans-serif">筹备 · 执行 · 结项</text>
+
+      <!-- Output 3 -->
+      <rect x="564" y="280" width="172" height="56" rx="8" fill="#FAECE7" stroke="#F5C4B3" stroke-width="0.5"/>
+      <text x="650" y="301" text-anchor="middle" font-size="13" font-weight="500" fill="#712B13" font-family="'Noto Sans SC',sans-serif">核心指标仪表盘</text>
+      <text x="650" y="318" text-anchor="middle" font-size="11" fill="#993C1D" font-family="'Noto Sans SC',sans-serif">抗逆力 · 覆盖人数</text>
+
+      <!-- Output 4 (report) connected from bottom -->
+      <path d="M538 346 L551 346 L551 380 L564 380" fill="none" stroke="#888780" stroke-width="1" marker-end="url(#arr1)"/>
+      <rect x="564" y="358" width="172" height="44" rx="8" fill="#F1EFE8" stroke="#D3D1C7" stroke-width="0.5"/>
+      <text x="650" y="374" text-anchor="middle" font-size="13" font-weight="500" fill="#444441" font-family="'Noto Sans SC',sans-serif">季度项目报告</text>
+      <text x="650" y="390" text-anchor="middle" font-size="11" fill="#888780" font-family="'Noto Sans SC',sans-serif">一键导出</text>
+
+      <!-- Legend -->
+      <rect x="20" y="430" width="10" height="10" rx="2" fill="#B4B2A9"/>
+      <text x="36" y="439" font-size="11" fill="#888780" font-family="'Noto Sans SC',sans-serif" dominant-baseline="central">线下数据</text>
+      <rect x="108" y="430" width="10" height="10" rx="2" fill="#EF9F27"/>
+      <text x="124" y="439" font-size="11" fill="#888780" font-family="'Noto Sans SC',sans-serif" dominant-baseline="central">录入处理</text>
+      <rect x="196" y="430" width="10" height="10" rx="2" fill="#1D9E75"/>
+      <text x="212" y="439" font-size="11" fill="#888780" font-family="'Noto Sans SC',sans-serif" dominant-baseline="central">Vika 三层中台</text>
+      <rect x="326" y="430" width="10" height="10" rx="2" fill="#378ADD"/>
+      <text x="342" y="439" font-size="11" fill="#888780" font-family="'Noto Sans SC',sans-serif" dominant-baseline="central">管理输出</text>
+    </svg>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ 图2 流程图 ════════════════════════════════════════ -->
+<div id="sec-flow" class="section">
+  <div class="section-label">图 2</div>
+  <div class="section-title">项目全流程线上化流程图</div>
+  <div class="section-desc">一个项目从立项到结项，在 Vika 里每一步对应的具体操作视图。右侧标注了 Vika 实际功能入口路径。</div>
+  <div class="vika-strip">
+    <span class="vika-chip chip-teal">神奇表单 → 左侧栏「+」新建表单</span>
+    <span class="vika-chip chip-purple">看板视图 → 视图切换按钮</span>
+    <span class="vika-chip chip-blue">甘特图 → 视图切换 → 甘特</span>
+    <span class="vika-chip chip-amber">仪表盘 → 空间首页右上角</span>
+  </div>
+  <div class="diagram-card">
+    <svg width="100%" viewBox="0 0 760 540" style="min-width:560px;">
+      <defs>
+        <marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+
+      <!-- Stage pills left -->
+      <rect x="14" y="30" width="62" height="56" rx="8" fill="#E1F5EE" stroke="#9FE1CB" stroke-width="0.5"/>
+      <text x="45" y="61" text-anchor="middle" font-size="11" fill="#085041" font-family="'Noto Sans SC',sans-serif" dominant-baseline="central">立项期</text>
+
+      <rect x="14" y="116" width="62" height="56" rx="8" fill="#E1F5EE" stroke="#9FE1CB" stroke-width="0.5"/>
+      <text x="45" y="144" text-anchor="middle" font-size="11" fill="#085041" font-family="'Noto Sans SC',sans-serif" dominant-baseline="central">准备期</text>
+
+      <rect x="14" y="202" width="62" height="56" rx="8" fill="#EEEDFE" stroke="#CECBF6" stroke-width="0.5"/>
+      <text x="45" y="230" text-anchor="middle" font-size="11" fill="#3C3489" font-family="'Noto Sans SC',sans-serif" dominant-baseline="central">执行期</text>
+
+      <rect x="14" y="288" width="62" height="56" rx="8" fill="#FAEEDA" stroke="#FAC775" stroke-width="0.5"/>
+      <text x="45" y="316" text-anchor="middle" font-size="11" fill="#633806" font-family="'Noto Sans SC',sans-serif" dominant-baseline="central">回收期</text>
+
+      <rect x="14" y="374" width="62" height="56" rx="8" fill="#FAECE7" stroke="#F5C4B3" stroke-width="0.5"/>
+      <text x="45" y="402" text-anchor="middle" font-size="11" fill="#712B13" font-family="'Noto Sans SC',sans-serif" dominant-baseline="central">结项期</text>
+
+      <!-- Main step boxes -->
+      <rect x="88" y="30" width="280" height="56" rx="8" fill="#E1F5EE" stroke="#9FE1CB" stroke-width="0.5"/>
+      <text x="228" y="51" text-anchor="middle" font-size="13" font-weight="500" fill="#085041" font-family="'Noto Sans SC',sans-serif" dominant-baseline="central">项目立项</text>
+      <text x="228" y="70" text-anchor="middle" font-size="11" fill="#0F6E56" font-family="'Noto Sans SC',sans-serif" dominant-baseline="central">表单录入立项信息，自动生成项目总表记录</text>
+
+      <line x1="228" y1="86" x2="228" y2="116" stroke="#1D9E75" stroke-width="1.5" marker-end="url(#arr2)"/>
+
+      <rect x="88" y="116" width="280" height="56" rx="8" fill="#E1F5EE" stroke="#9FE1CB" stroke-width="0.5"/>
+      <text x="228" y="137" text-anchor="middle" font-size="13" font-weight="500" fill="#085041" font-family="'Noto Sans SC',sans-serif" dominant-baseline="central">志愿者招募与排班</text>
+      <text x="228" y="156" text-anchor="middle" font-size="11" fill="#0F6E56" font-family="'Noto Sans SC',sans-serif" dominant-baseline="central">招募表单 + 志愿者表自动汇总报名数据</text>
+
+      <line x1="228" y1="172" x2="228" y2="202" stroke="#1D9E75" stroke-width="1.5" marker-end="url(#arr2)"/>
+
+      <rect x="88" y="202" width="280" height="56" rx="8" fill="#EEEDFE" stroke="#CECBF6" stroke-width="0.5"/>
+      <text x="228" y="223" text-anchor="middle" font-size="13" font-weight="500" fill="#3C3489" font-family="'Noto Sans SC',sans-serif" dominant-baseline="central">课程执行</text>
+      <text x="228" y="242" text-anchor="middle" font-size="11" fill="#534AB7" font-family="'Noto Sans SC',sans-serif" dominant-baseline="central">看板视图更新状态，甘特图追踪各节点进度</text>
+
+      <line x1="228" y1="258" x2="228" y2="288" stroke="#534AB7" stroke-width="1.5" marker-end="url(#arr2)"/>
+
+      <rect x="88" y="288" width="280" height="56" rx="8" fill="#FAEEDA" stroke="#FAC775" stroke-width="0.5"/>
+      <text x="228" y="309" text-anchor="middle" font-size="13" font-weight="500" fill="#633806" font-family="'Noto Sans SC',sans-serif" dominant-baseline="central">数据回收</text>
+      <text x="228" y="328" text-anchor="middle" font-size="11" fill="#854F0B" font-family="'Noto Sans SC',sans-serif" dominant-baseline="central">录入模板填报，OCR 识别书信后人工复核</text>
+
+      <line x1="228" y1="344" x2="228" y2="374" stroke="#BA7517" stroke-width="1.5" marker-end="url(#arr2)"/>
+
+      <rect x="88" y="374" width="280" height="56" rx="8" fill="#FAECE7" stroke="#F5C4B3" stroke-width="0.5"/>
+      <text x="228" y="395" text-anchor="middle" font-size="13" font-weight="500" fill="#712B13" font-family="'Noto Sans SC',sans-serif" dominant-baseline="central">成效分析与结项复盘</text>
+      <text x="228" y="414" text-anchor="middle" font-size="11" fill="#993C1D" font-family="'Noto Sans SC',sans-serif" dominant-baseline="central">仪表盘自动汇总，图表展示，导出季度报告</text>
+
+      <!-- Vika tags on right -->
+      <rect x="384" y="46" width="90" height="22" rx="11" fill="#E1F5EE" stroke="#9FE1CB" stroke-width="0.5"/>
+      <text x="429" y="57" text-anchor="middle" font-size="10" fill="#085041" font-family="'Noto Sans SC',sans-serif" dominant-baseline="central">神奇表单</text>
+
+      <rect x="384" y="132" width="90" height="22" rx="11" fill="#E1F5EE" stroke="#9FE1CB" stroke-width="0.5"/>
+      <text x="429" y="143" text-anchor="middle" font-size="10" fill="#085041" font-family="'Noto Sans SC',sans-serif" dominant-baseline="central">表单 + 表格</text>
+
+      <rect x="384" y="218" width="90" height="22" rx="11" fill="#EEEDFE" stroke="#CECBF6" stroke-width="0.5"/>
+      <text x="429" y="229" text-anchor="middle" font-size="10" fill="#3C3489" font-family="'Noto Sans SC',sans-serif" dominant-baseline="central">看板 + 甘特图</text>
+
+      <rect x="384" y="304" width="90" height="22" rx="11" fill="#FAEEDA" stroke="#FAC775" stroke-width="0.5"/>
+      <text x="429" y="315" text-anchor="middle" font-size="10" fill="#633806" font-family="'Noto Sans SC',sans-serif" dominant-baseline="central">录入模板</text>
+
+      <rect x="384" y="390" width="90" height="22" rx="11" fill="#FAECE7" stroke="#F5C4B3" stroke-width="0.5"/>
+      <text x="429" y="401" text-anchor="middle" font-size="10" fill="#712B13" font-family="'Noto Sans SC',sans-serif" dominant-baseline="central">图表 + 仪表盘</text>
+
+      <!-- Auto notifications dashed box -->
+      <rect x="492" y="185" width="250" height="195" rx="12" fill="none" stroke="#B4B2A9" stroke-width="0.5" stroke-dasharray="4 3"/>
+      <text x="617" y="208" text-anchor="middle" font-size="12" font-weight="500" fill="#5F5E5A" font-family="'Noto Sans SC',sans-serif">自动化通知（企微联动）</text>
+      <text x="617" y="232" text-anchor="middle" font-size="11" fill="#888780" font-family="'Noto Sans SC',sans-serif">状态变更 → 企微实时推送</text>
+      <text x="617" y="254" text-anchor="middle" font-size="11" fill="#888780" font-family="'Noto Sans SC',sans-serif">结项触发财务审批提醒</text>
+      <text x="617" y="276" text-anchor="middle" font-size="11" fill="#888780" font-family="'Noto Sans SC',sans-serif">表单提交 → 通知项目组长</text>
+      <text x="617" y="298" text-anchor="middle" font-size="11" fill="#888780" font-family="'Noto Sans SC',sans-serif">权限分级控制数据可见范围</text>
+      <line x1="492" y1="275" x2="474" y2="275" stroke="#B4B2A9" stroke-width="1" marker-end="url(#arr2)"/>
+
+      <!-- Vika path hint -->
+      <text x="492" y="345" font-size="10" fill="#B4B2A9" font-family="'Noto Sans SC',sans-serif">Vika 路径：自动化 → 新建规则</text>
+      <text x="492" y="362" font-size="10" fill="#B4B2A9" font-family="'Noto Sans SC',sans-serif">→ 触发条件 → 企微通知</text>
+
+    </svg>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ 图3 看板 ════════════════════════════════════════ -->
+<div id="sec-dash" class="section">
+  <div class="section-label">图 3</div>
+  <div class="section-title">核心指标可视化看板示意图</div>
+  <div class="section-desc">模拟管理层打开 Vika 仪表盘后看到的页面。在 Vika 中，点击空间首页右上角"仪表盘"即可进入，所有数据从关联数据表自动汇总，无需手动统计。</div>
+  <div class="vika-strip">
+    <span class="vika-chip chip-teal">Vika 路径：空间首页 → 仪表盘 → 添加组件</span>
+    <span class="vika-chip chip-amber">组件类型：数字卡片 / 柱状图 / 看板 / 折线图</span>
+  </div>
+  <div class="diagram-card">
+    <div class="db-section">
+      <div class="db-metric-grid">
+        <div class="db-metric">
+          <div class="db-metric-val">6</div>
+          <div class="db-metric-lbl">本期执行项目数</div>
+          <div class="db-metric-delta delta-up">↑ 2 较上季度</div>
+        </div>
+        <div class="db-metric">
+          <div class="db-metric-val">342</div>
+          <div class="db-metric-lbl">覆盖学生数</div>
+          <div class="db-metric-delta delta-up">↑ 18% 较上期</div>
+        </div>
+        <div class="db-metric">
+          <div class="db-metric-val">23</div>
+          <div class="db-metric-lbl">活跃志愿者数</div>
+          <div class="db-metric-delta delta-warn">待激活 31 人</div>
+        </div>
+        <div class="db-metric">
+          <div class="db-metric-val" style="color:#A32D2D;">3</div>
+          <div class="db-metric-lbl">待处理事项</div>
+          <div class="db-metric-delta delta-err">2 项财务待批</div>
+        </div>
+      </div>
+    </div>
+    <div class="db-mid">
+      <div class="db-panel">
+        <div class="db-panel-title">各项目点抗逆力指数（前后测对比）</div>
+        <div class="bar-row"><span class="bar-lbl">肇庆A前</span><div class="bar-track"><div class="bar-fill" style="width:58%;background:#B4B2A9;"></div></div><span class="bar-val">58</span></div>
+        <div class="bar-row"><span class="bar-lbl">肇庆A后</span><div class="bar-track"><div class="bar-fill" style="width:82%;background:#1D9E75;"></div></div><span class="bar-val" style="color:#085041;">82</span></div>
+        <div class="bar-row"><span class="bar-lbl">梅州B前</span><div class="bar-track"><div class="bar-fill" style="width:61%;background:#B4B2A9;"></div></div><span class="bar-val">61</span></div>
+        <div class="bar-row"><span class="bar-lbl">梅州B后</span><div class="bar-track"><div class="bar-fill" style="width:87%;background:#1D9E75;"></div></div><span class="bar-val" style="color:#085041;">87</span></div>
+        <div class="bar-row"><span class="bar-lbl">梅州C前</span><div class="bar-track"><div class="bar-fill" style="width:55%;background:#B4B2A9;"></div></div><span class="bar-val">55</span></div>
+        <div class="bar-row"><span class="bar-lbl">梅州C后</span><div class="bar-track"><div class="bar-fill" style="width:79%;background:#1D9E75;"></div></div><span class="bar-val" style="color:#085041;">79</span></div>
+      </div>
+      <div class="db-panel">
+        <div class="db-panel-title">项目状态看板</div>
+        <div class="kanban-cols">
+          <div class="kb-col">
+            <div class="kb-header" style="background:#E1F5EE;color:#085041;">筹备中</div>
+            <div class="kb-card">云浮新项目<br><span>志愿者招募中</span></div>
+          </div>
+          <div class="kb-col">
+            <div class="kb-header" style="background:#E6F1FB;color:#0C447C;">执行中</div>
+            <div class="kb-card">肇庆共同成长<br><span>第3/6课</span></div>
+            <div class="kb-card">梅州无限可能<br><span>第5/8课</span></div>
+          </div>
+          <div class="kb-col">
+            <div class="kb-header" style="background:#FAEEDA;color:#633806;">待复盘</div>
+            <div class="kb-card">梅州C春季营<br><span>数据待汇总</span></div>
+          </div>
+          <div class="kb-col">
+            <div class="kb-header" style="background:#F1EFE8;color:#444441;">已结项</div>
+            <div class="kb-card">肇庆助学金<br><span>Q1完成</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="db-bottom">
+      <div class="db-panel">
+        <div class="db-panel-title">学生反馈满意度 + 教师记录率</div>
+        <div class="bar-row"><span class="bar-lbl">非常满意</span><div class="bar-track"><div class="bar-fill" style="width:62%;background:#1D9E75;"></div></div><span class="bar-val">62%</span></div>
+        <div class="bar-row"><span class="bar-lbl">满意</span><div class="bar-track"><div class="bar-fill" style="width:28%;background:#5DCAA5;"></div></div><span class="bar-val">28%</span></div>
+        <div class="bar-row"><span class="bar-lbl">一般</span><div class="bar-track"><div class="bar-fill" style="width:8%;background:#B4B2A9;"></div></div><span class="bar-val">8%</span></div>
+        <div class="bar-row"><span class="bar-lbl">教师记录率</span><div class="bar-track"><div class="bar-fill" style="width:91%;background:#378ADD;"></div></div><span class="bar-val">91%</span></div>
+      </div>
+      <div class="db-panel">
+        <div class="db-panel-title">异常项目预警</div>
+        <div class="warn-row"><div class="warn-dot" style="background:#E24B4A;"></div><span>梅州B — 财务报销逾期 3 天</span></div>
+        <div class="warn-row"><div class="warn-dot" style="background:#E24B4A;"></div><span>云浮 — 志愿者确认率仅 40%</span></div>
+        <div class="warn-row"><div class="warn-dot" style="background:#BA7517;"></div><span>肇庆A — 教师记录本期缺 2 次</span></div>
+        <div class="warn-row"><div class="warn-dot" style="background:#888780;"></div><span style="color:var(--text-sec);">其余项目运行正常</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ 图4 权限图 ════════════════════════════════════════ -->
+<div id="sec-perm" class="section">
+  <div class="section-label">图 4</div>
+  <div class="section-title">角色权限示意图</div>
+  <div class="section-desc">将儿童隐私保护与权限分级管理可视化。在 Vika 中，通过"成员管理 → 权限设置"为不同角色分配字段级可见性，实现数据共享与隐私合规并行。</div>
+  <div class="vika-strip">
+    <span class="vika-chip chip-teal">Vika 路径：空间设置 → 成员与权限</span>
+    <span class="vika-chip chip-blue">字段隐藏：字段设置 → 字段权限 → 按角色隐藏</span>
+    <span class="vika-chip chip-amber">表单共享：发布表单 → 仅录入，无法查看其他记录</span>
+  </div>
+  <div class="diagram-card">
+    <div class="role-grid">
+      <div class="role-card">
+        <div class="role-hd" style="background:#E1F5EE;">
+          <div class="role-hd-title" style="color:#085041;">总干事</div>
+          <div class="role-hd-sub" style="color:#0F6E56;">最高管理权限</div>
+        </div>
+        <div class="role-body">
+          <div class="perm-row"><span class="perm-icon icon-full">全</span><span>总仪表盘<span class="vtag vtag-t">仪表盘</span></span></div>
+          <div class="perm-row"><span class="perm-icon icon-full">全</span><span>导出任意数据<span class="vtag vtag-t">导出</span></span></div>
+          <div class="perm-row"><span class="perm-icon icon-full">全</span><span>所有项目总表<span class="vtag vtag-t">表格</span></span></div>
+          <div class="perm-row"><span class="perm-icon icon-full">全</span><span>财务审批节点<span class="vtag vtag-a">审批</span></span></div>
+          <div class="perm-row"><span class="perm-icon icon-full">全</span><span>儿童信息字段<span class="vtag vtag-t">加密字段</span></span></div>
+        </div>
+      </div>
+      <div class="role-card">
+        <div class="role-hd" style="background:#E6F1FB;">
+          <div class="role-hd-title" style="color:#0C447C;">项目主管</div>
+          <div class="role-hd-sub" style="color:#185FA5;">本项目完整权限</div>
+        </div>
+        <div class="role-body">
+          <div class="perm-row"><span class="perm-icon icon-read">读</span><span>本项目进度<span class="vtag vtag-b">甘特图</span></span></div>
+          <div class="perm-row"><span class="perm-icon icon-write">写</span><span>更新项目状态<span class="vtag vtag-b">看板</span></span></div>
+          <div class="perm-row"><span class="perm-icon icon-read">读</span><span>本项目数据报表<span class="vtag vtag-b">图表</span></span></div>
+          <div class="perm-row"><span class="perm-icon icon-write">写</span><span>管理志愿者排班<span class="vtag vtag-b">表格</span></span></div>
+          <div class="perm-row"><span class="perm-icon icon-none">—</span><span class="perm-muted">不可导出/跨项目</span></div>
+        </div>
+      </div>
+      <div class="role-card">
+        <div class="role-hd" style="background:#FAEEDA;">
+          <div class="role-hd-title" style="color:#633806;">执行老师</div>
+          <div class="role-hd-sub" style="color:#854F0B;">录入权限</div>
+        </div>
+        <div class="role-body">
+          <div class="perm-row"><span class="perm-icon icon-write">写</span><span>填写课堂记录<span class="vtag vtag-a">表单</span></span></div>
+          <div class="perm-row"><span class="perm-icon icon-write">写</span><span>提交出勤信息<span class="vtag vtag-a">表单</span></span></div>
+          <div class="perm-row"><span class="perm-icon icon-none">—</span><span class="perm-muted">不可查看其他字段</span></div>
+          <div class="perm-row"><span class="perm-icon icon-none">—</span><span class="perm-muted">不可修改已提交记录</span></div>
+          <div class="perm-row"><span class="perm-icon icon-none">—</span><span class="perm-muted">不可查看学生档案</span></div>
+        </div>
+      </div>
+      <div class="role-card">
+        <div class="role-hd" style="background:#F1EFE8;">
+          <div class="role-hd-title" style="color:#444441;">志愿者</div>
+          <div class="role-hd-sub" style="color:#5F5E5A;">最小录入权限</div>
+        </div>
+        <div class="role-body">
+          <div class="perm-row"><span class="perm-icon icon-write">写</span><span>填写服务时长<span class="vtag vtag-g">表单</span></span></div>
+          <div class="perm-row"><span class="perm-icon icon-write">写</span><span>提交活动反馈<span class="vtag vtag-g">表单</span></span></div>
+          <div class="perm-row"><span class="perm-icon icon-none">—</span><span class="perm-muted">不可查看其他人数据</span></div>
+          <div class="perm-row"><span class="perm-icon icon-none">—</span><span class="perm-muted">不可接触学生信息</span></div>
+          <div class="perm-row"><span class="perm-icon icon-none">—</span><span class="perm-muted">不可查看评估数据</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="matrix-wrap">
+      <div class="matrix-title">权限矩阵 — Vika 各模块可见范围</div>
+      <table class="perm-matrix">
+        <thead>
+          <tr>
+            <th>功能模块</th>
+            <th style="color:#085041;">总干事</th>
+            <th style="color:#0C447C;">项目主管</th>
+            <th style="color:#854F0B;">执行老师</th>
+            <th style="color:#444441;">志愿者</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>总仪表盘</td><td><span class="cell-full">查看+导出</span></td><td><span class="cell-none">不可见</span></td><td><span class="cell-none">不可见</span></td><td><span class="cell-none">不可见</span></td></tr>
+          <tr><td>项目总表</td><td><span class="cell-full">全部</span></td><td><span class="cell-read">本项目</span></td><td><span class="cell-none">不可见</span></td><td><span class="cell-none">不可见</span></td></tr>
+          <tr><td>甘特图视图</td><td><span class="cell-full">全部</span></td><td><span class="cell-read">本项目</span></td><td><span class="cell-none">不可见</span></td><td><span class="cell-none">不可见</span></td></tr>
+          <tr><td>看板视图</td><td><span class="cell-full">全部</span></td><td><span class="cell-write">本项目编辑</span></td><td><span class="cell-none">不可见</span></td><td><span class="cell-none">不可见</span></td></tr>
+          <tr><td>课堂记录表单</td><td><span class="cell-full">全部</span></td><td><span class="cell-read">查看</span></td><td><span class="cell-write">仅录入</span></td><td><span class="cell-none">不可见</span></td></tr>
+          <tr><td>志愿者服务表</td><td><span class="cell-full">全部</span></td><td><span class="cell-read">查看</span></td><td><span class="cell-none">不可见</span></td><td><span class="cell-write">仅填自己</span></td></tr>
+          <tr><td>学生信息字段</td><td><span class="cell-full">加密可见</span></td><td><span class="cell-none">脱敏/隐藏</span></td><td><span class="cell-none">不可见</span></td><td><span class="cell-none">不可见</span></td></tr>
+          <tr><td>财务审批节点</td><td><span class="cell-full">审批权</span></td><td><span class="cell-write">提交申请</span></td><td><span class="cell-none">不可见</span></td><td><span class="cell-none">不可见</span></td></tr>
+        </tbody>
+      </table>
+      <div class="legend-row">
+        <div class="legend-item"><div class="legend-dot" style="background:#1D9E75;"></div>查看+导出（最高）</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#378ADD;"></div>只读查看</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#BA7517;"></div>仅可录入</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#888780;"></div>完全不可见</div>
+      </div>
+    </div>
+
+    <div class="privacy-box">
+      <div class="privacy-title">儿童隐私保护机制（对应规划原则四）</div>
+      <div class="privacy-row"><span>·</span><span>学生姓名、评估分数等敏感字段设为"加密字段"，仅总干事可解密查看</span></div>
+      <div class="privacy-row"><span>·</span><span>项目主管看到的学生数据自动脱敏（显示"学生A"而非真实姓名）</span></div>
+      <div class="privacy-row"><span>·</span><span>志愿者和执行老师只能通过表单录入，无法反向浏览表格中的学生记录</span></div>
+      <div class="privacy-row"><span>·</span><span>数据导出日志由 Vika 系统自动记录，可追溯</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- Deploy note -->
+<div class="deploy-note">
+  <strong>飞书文档嵌入说明</strong><br>
+  将此 HTML 文件上传至任意静态托管服务（如 GitHub Pages、Vercel、Cloudflare Pages，均免费），获得一个 <code>https://</code> 链接后，在飞书文档中点击「+」→「网页卡片」→ 粘贴链接即可嵌入。若暂无域名，也可直接将此文件发给甲方，用浏览器打开即为完整汇报材料。
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>
